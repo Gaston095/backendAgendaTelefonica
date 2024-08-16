@@ -49,12 +49,24 @@ app.delete("/api/persons/:id", (req,res) => {
 
 
 app.post("/api/persons", (req,res) => {
-  const newPerson = req.body
-  newPerson.id = Math.floor(Math.random() * 10000)
+  const body = req.body
+  const generateID = Math.floor(Math.random() * 10000)
 
-  persons = persons.concat(newPerson)
+  if (!body.name) {
+    return res.status(400).json({
+      error: 'content missing'
+    })
+  }
 
-  res.json(newPerson)
+  const person = {
+    name : body.name,
+    number: body.number,
+    id : generateID
+  }
+
+  persons = persons.concat(person)
+
+  res.json(person)
 })
 
 app.get('/info',(req,res) => {
