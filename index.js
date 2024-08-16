@@ -47,6 +47,16 @@ app.delete("/api/persons/:id", (req,res) => {
   res.status(204).end()
 })
 
+
+app.post("/api/persons", (req,res) => {
+  const newPerson = req.body
+  newPerson.id = Math.floor(Math.random() * 10000)
+
+  persons = persons.concat(newPerson)
+
+  res.json(newPerson)
+})
+
 app.get('/info',(req,res) => {
   res.send(`
     <h2>Phonebook has info for ${persons.length} people</h2>
