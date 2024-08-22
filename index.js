@@ -40,6 +40,16 @@ morgan.token('body', function getBody (req) {
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
+const errorHandler = (error, req, res, next) => {
+  console.log(error.message)
+
+  if (error.name === 'CastError') {
+    res.status(400).send({ error: 'Malformatted id' })
+  }
+
+  next(error)
+}
+
 app.get("/", (req,res) => {
   res.send('<h1>Agenda Telefónica</h1>')
 })
@@ -50,10 +60,15 @@ app.get("/api/persons",(req, res) => {
     })
 })
 
-app.get("/api/persons/:id", (req,res) => {
+app.get("/api/persons/:id", (req, res, next) => {
   Person.findById(req.params.id).then(person => {
-    res.json(person)
+    if (person) {
+      res.json(person)
+    } else {
+      res.status(404).end()
+    }
   })
+  .catch(error => next(error))
 })
 
 app.delete("/api/persons/:id", (req, res, next) => {
@@ -67,7 +82,6 @@ app.delete("/api/persons/:id", (req, res, next) => {
 
 app.post("/api/persons", (req,res) => {
   const body = req.body
-  // const generateID = Math.floor(Math.random() * 10000)
 
   if (!body.name || !body.number) {
     return res.status(400).json({
@@ -98,6 +112,8 @@ app.get('/info',(req,res) => {
     <p>${new Date().toString()}</p>
   `)
 })
+
+app.use(errorHandler)
 
 const PORT = process.env.PORT
 app.listen(PORT, ()=> {
