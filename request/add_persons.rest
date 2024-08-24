@@ -1,6 +1,10 @@
 GET http://localhost:3000/api/persons
 
 ###
+
+GET http://localhost:3000/api/persons/66c73c6e3f03184cef066503
+
+###
 POST http://localhost:3000/api/persons
 Constent-Type: application/json
 

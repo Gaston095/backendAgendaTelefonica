@@ -121,12 +121,18 @@ app.put("/api/persons/:id", (req, res, next) => {
   .catch(error => next(error))
 })
 
-app.get('/info',(req,res) => {
-  res.send(`
-    <h2>Phonebook has info for ${persons.length} people</h2>
-    <p>${new Date().toString()}</p>
-  `)
+app.get('/info',async (req,res) => {
+  try {
+    const count = await Person.countDocuments();
+      res.send(`
+        <h2>Phonebook has info for ${count} people</h2>
+        <p>${new Date().toString()}</p>
+      `)
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 })
+
 
 app.use(errorHandler)
 
